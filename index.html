@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="description" content="Indexer for every country on the globe" />
+    <meta name="keywords" content="HTML, CSS, Bootstrap, JavaScript, Leaflet, AJAX, JSON, PHP" />
+    <meta name="author" content="Hafizullah Karim" />
+
+    <title> Gazetteer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/simple-sidebar.css" rel="stylesheet">
+
+    <!-- font -->
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+          integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
+
+    <!-- Select2 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="css/leaflet.extra-markers.min.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/weather_card.css" />
+
+</head>
+
+<body>
+
+    <div class="d-flex" id="wrapper">
+
+        <!-- Sidebar -->
+        <div class="bg-light border-right" id="sidebar-wrapper">
+            <div class="sidebar-heading">Gazeetteer </div>
+            <div class="list-group list-group-flush">
+                <p class="list-group-item list-group-item-action bg-light"><strong>CountryName: </strong><span class="data" id="countryName"></span></p>
+                <p class="list-group-item list-group-item-action bg-light"><strong>Population: </strong><span class="data" id="Population"></span></pclass="list-group-item>
+                <p class="list-group-item list-group-item-action bg-light"><strong>CapitalCity: </strong><span class="data" id="capitalCity"></span></p>
+                <p class="list-group-item list-group-item-action bg-light"><strong>continentName: </strong><span class="data" id="continentName"></span></p>
+                <img id="countryFlag" src="" style="height:60px" />
+                <div class="text-left">
+                    <div class="btn-group btn-group-md" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target=""
+                                onclick="CovidResp();">
+                            <i class="fal fa-shield-virus"></i> Covid
+                        </button>
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target=""
+                                onclick="weatherResp();">
+                            <i class="fas fa-cloud-sun"></i> Weather
+                        </button>
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target=""
+                                onclick="newsResp();">
+                            <i class="far fa-newspaper"></i> News
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#sidebar-wrapper -->
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                <button class="btn btn-primary" id="menu-toggle">Country Info</button>
+
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    Select Country
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div id="map_sibling_top">
+                        <select class="form-select" id="country_list" onchange="zoomToCountry(this.value)">
+                            <option value="">Select Country</option>
+                        </select>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-fluid">
+                <div id="map"></div>
+            </div>
+
+
+            <div class="modal fade" id="coronoModal">
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title text-warning">Covid Details</h4>
+
+                        </div>
+                        <div class="modal-body" id="covid_data">
+                            <table class="table table-bordered table-striped table-hover">
+                                <tr>
+                                    <th>Total confirmed Cases</th>
+                                    <td id="totalConfirmedCases"></td>
+                                </tr>
+                                <tr>
+                                    <th>Newly Confirmed Cases</th>
+                                    <td id="newlyConfirmedCases"></td>
+                                </tr>
+                                <tr>
+                                    <th>Newly Recovered Cases</th>
+                                    <td id="newlyRecoveredCases"></td>
+                                </tr>
+
+                                <tr>
+                                    <th>New Deaths</th>
+                                    <td id="newDeaths"></td>
+                                </tr>
+                                <tr>
+                                    <th>Total Deaths</th>
+                                    <td id="totalsDeaths"></td>
+                                </tr>
+
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weather Card -->
+            <div class="modal fade " id="weatherModal">
+                <div class="modal-dialog modal-lg">
+                    <div class="container-fluid">
+                        <div class="row justify-content-center">
+                            <div class=" card card-weather col-12 col-md-5 col-sm-12 col-xs-12">
+                                <div class="card p-4 ">
+                                    <div class="modal-header ">
+                                        <div class=" md-auto">
+                                            <h4 id="weatherCity" class="flex-grow-1 p-1"></h4>
+                                            <h6 id="weatherTime"> </h6>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-column temp mt-5 mb-3">
+                                        <h1 class="mb-0 font-weight-bold" id="weatherTemp">  </h1>
+                                        <span id="weatherDescription" class="medium grey"></span>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="temp-details flex-grow-1">
+                                            <p class="my-1"> <img src="https://i.imgur.com/B9kqOzp.png" height="17px"> <span id="windSpeed">  </span> </p>
+                                            <p class="my-1"> <i class="fa fa-tint mr-2" aria-hidden="true"></i> <span id="humidity"> </span> </p>
+                                            <p class="my-1"> <img src="https://i.imgur.com/wGSJ8C5.png" height="17px"> <span "pressure> </span> </p>
+                                        </div>
+                                        <div id="icon">
+                                            <img id="wicon" src="" width="140px" height="140px" />
+                                            <br />
+                                        </div>
+                                        <br />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- News Modal-->
+            <div class="modal fade" id="newsModal">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title text-warning">Latest News</h4>
+                            <button type="button" class="close" data-dismiss="modal">
+                                &times;
+                            </button>
+                        </div>
+                        <div class="modal-body" id="news_data"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+
+    <script src="js/leaflet.js"></script>
+    <script src="js/spin.min.js"></script>
+    <script src="js/leaflet.spin.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/leaflet.extra-markers.min.js"></script>
+    <script src="js/script.js"></script>
+   
+    <!-- Menu Toggle Script -->
+    <script>
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+    </script>
+
+</body>
+
+</html>
