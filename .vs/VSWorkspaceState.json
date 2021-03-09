@@ -1,7 +1,11 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\css",
+    "\\img",
+    "\\js",
+    "\\php"
   ],
-  "SelectedNode": "\\index.html",
+  "SelectedNode": "\\php\\openWeather.php",
   "PreviewInSolutionExplorer": false
 }
